@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recap</title>
+<style>
+  :root {
+    --bg: #f3f4f1; --panel: #ffffff; --ink: #1d2320; --muted: #66706b; --line: #e2e5e0;
+    --accent: #1f6f5c; --accent-soft: #e3f0ec;
+    --major: #b42318; --major-soft: #fdeceb; --mod: #b54708; --mod-soft: #fef3e6;
+    --sunrise: #c2410c; --maple: #15803d; --harbor: #1d4ed8;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; }
+  header { display: flex; align-items: center; gap: 12px; padding: 14px 24px; }
+  .logo { font-weight: 800; font-size: 20px; letter-spacing: -0.02em; color: var(--accent); }
+  .tag { color: var(--muted); }
+  .mode { margin-left: auto; font-size: 12px; color: var(--muted); }
+  .reset { margin-left: 10px; font-size: 12px; background: none; border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; cursor: pointer; color: var(--muted); }
+  main { display: grid; grid-template-columns: 320px 1fr; gap: 24px; padding: 0 24px 24px; align-items: start; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+
+  /* phone */
+  .phone { background: #111; border-radius: 36px; padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.15); }
+  .screen { background: #fafaf8; border-radius: 26px; min-height: 600px; padding: 22px 18px; }
+  .phone-title { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .phone h2 { font-size: 20px; margin: 6px 0 4px; }
+  .phone p { color: var(--muted); margin: 0 0 14px; font-size: 14px; }
+  .src { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--line);
+         border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; cursor: pointer; }
+  .src input { width: 18px; height: 18px; accent-color: var(--accent); }
+  .src b { display: block; font-size: 14px; }
+  .src small { color: var(--muted); }
+  .btn { width: 100%; border: 0; border-radius: 12px; padding: 13px; font-size: 15px; font-weight: 600;
+         background: var(--accent); color: #fff; cursor: pointer; margin-top: 8px; }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .btn.ghost { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+  .fine { font-size: 12px; color: var(--muted); margin-top: 10px; text-align: center; }
+  .shared { background: var(--accent-soft); border-radius: 12px; padding: 14px; margin-top: 10px; }
+  .idle { text-align: center; padding-top: 140px; color: var(--muted); }
+
+  /* doctor */
+  .ehr { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .ehr-top { display: flex; align-items: baseline; gap: 14px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: #fbfbfa; }
+  .ehr-top .who { font-size: 18px; font-weight: 700; }
+  .ehr-top .meta { color: var(--muted); font-size: 13px; }
+  .ehr-top .clinic { margin-left: auto; font-size: 13px; color: var(--muted); }
+  .reason { padding: 10px 20px; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .reason b { color: var(--muted); font-weight: 600; }
+  .body { padding: 18px 20px; }
+  .empty { padding: 40px 20px 50px; text-align: center; color: var(--muted); }
+  .empty h3 { color: var(--ink); margin: 0 0 6px; }
+  .empty ul { text-align: left; display: inline-block; margin: 14px 0 20px; }
+  .empty .btn { width: auto; padding: 11px 22px; }
+  .grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 18px; }
+  @media (max-width: 1150px) { .grid { grid-template-columns: 1fr; } }
+  h4 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; }
+  .card { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; }
+  .brief { background: var(--accent-soft); border-color: transparent; white-space: pre-wrap; font-size: 15px; }
+  .brief .by { font-size: 11px; color: var(--muted); margin-top: 8px; }
+  .alert { border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; border-left: 4px solid; }
+  .alert.major { background: var(--major-soft); border-color: var(--major); }
+  .alert.moderate { background: var(--mod-soft); border-color: var(--mod); }
+  .alert .k { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+  .alert.major .k { color: var(--major); } .alert.moderate .k { color: var(--mod); }
+  .alert .t { font-weight: 700; margin: 2px 0; }
+  .alert .d { font-size: 13px; }
+  .alert .a { font-size: 13px; margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  td { padding: 6px 4px; border-top: 1px solid var(--line); vertical-align: top; }
+  tr:first-child td { border-top: 0; }
+  .chip { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 999px; color: #fff; white-space: nowrap; }
+  .chip.sunrise { background: var(--sunrise); } .chip.maple { background: var(--maple); } .chip.harbor { background: var(--harbor); }
+  .tl { font-size: 13px; }
+  .tl div { padding: 6px 0; border-top: 1px solid var(--line); }
+  .tl div:first-child { border-top: 0; }
+  .tl .dt { color: var(--muted); font-variant-numeric: tabular-nums; margin-right: 6px; }
+  .ask { display: flex; gap: 8px; }
+  .ask input { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+  .ask button { border: 0; background: var(--accent); color: #fff; border-radius: 10px; padding: 0 16px; font-weight: 600; cursor: pointer; }
+  .answer { margin-top: 10px; font-size: 14px; white-space: pre-wrap; }
+  .q { color: var(--muted); font-size: 13px; margin-top: 10px; }
+  .loading { padding: 60px 20px; text-align: center; color: var(--muted); }
+  .spin { width: 28px; height: 28px; border: 3px solid var(--line); border-top-color: var(--accent); border-radius: 50%;
+          animation: s 0.8s linear infinite; margin: 0 auto 12px; }
+  @keyframes s { to { transform: rotate(360deg); } }
+  .label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<header>
+  <span class="logo">Recap</span>
+  <span class="tag">Never retell your medical history again.</span>
+  <span class="mode" id="mode"></span>
+  <button class="reset" onclick="resetDemo()">Reset demo</button>
+</header>
+<main>
+  <section>
+    <div class="label">Patient's phone</div>
+    <div class="phone"><div class="screen" id="phone"></div></div>
+  </section>
+  <section>
+    <div class="label">Doctor's screen</div>
+    <div class="ehr" id="ehr"></div>
+  </section>
+</main>
+<script>
+let S = null, requested = false, busy = false, qa = [];
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const chip = (id, name) => `<span class="chip ${id}">${esc(name)}</span>`;
+
+async function load() {
+  S = await (await fetch("/api/state")).json();
+  document.getElementById("mode").textContent = S.llm ? "AI: " + S.model : "AI: offline template mode";
+  render();
+}
+
+function render() { renderPhone(); renderEhr(); }
+
+function renderPhone() {
+  const el = document.getElementById("phone");
+  if (S.consent.length) {
+    el.innerHTML = `
+      <div class="phone-title">Recap</div>
+      <h2>Shared ✓</h2>
+      <p>${esc(S.today.doctor)} at ${esc(S.today.clinic)} can see your records for this visit.</p>
+      <div class="shared">
+        ${S.sources.filter(s => S.consent.includes(s.id)).map(s => `<div style="margin:4px 0">${chip(s.id, s.name)}</div>`).join("")}
+        <div class="fine" style="text-align:left">Access expires in 2 hours. Read-only.</div>
+      </div>
+      <button class="btn ghost" onclick="revoke()">Revoke access</button>`;
+    return;
+  }
+  if (!requested) {
+    el.innerHTML = `<div class="idle">🩺<br>No requests yet.<br><small>Your records from ${S.sources.length} hospitals are linked.</small></div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="phone-title">Recap · Request</div>
+    <h2>${esc(S.today.clinic)}</h2>
+    <p>${esc(S.today.doctor)} wants to see your history for today's visit.</p>
+    ${S.sources.map(s => `
+      <label class="src"><input type="checkbox" value="${s.id}" checked>
+        <span><b>${esc(s.name)}</b><small>${esc(s.kind)} · ${s.counts.meds} meds · ${s.counts.visits} visits</small></span>
+      </label>`).join("")}
+    <button class="btn" id="share" onclick="share()" ${busy ? "disabled" : ""}>${busy ? "Sharing…" : "Share for this visit"}</button>
+    <div class="fine">Expires in 2 hours. You can revoke any time.</div>`;
+}
+
+function renderEhr() {
+  const el = document.getElementById("ehr");
+  const p = S.patient, t = S.today;
+  const top = `
+    <div class="ehr-top"><span class="who">${esc(p.name)}</span>
+      <span class="meta">${p.age} ${esc(p.sex)} · DOB ${esc(p.dob)}</span>
+      <span class="clinic">${esc(t.clinic)} · ${esc(t.doctor)} · ${esc(t.date)}</span></div>
+    <div class="reason"><b>Reason for visit:</b> ${esc(t.reason)}</div>`;
+  if (busy) {
+    el.innerHTML = top + `<div class="loading"><div class="spin"></div>Merging records from ${S.sources.length} hospitals and checking for conflicts…</div>`;
+    return;
+  }
+  if (!S.consent.length) {
+    el.innerHTML = top + `
+      <div class="empty"><h3>No prior records at this clinic</h3>
+        <div>Without Recap, the next 10 minutes go to asking:</div>
+        <ul><li>Which hospitals have you been to?</li><li>What medicines do you take? What dose?</li>
+          <li>Any allergies?</li><li>Any recent tests?</li></ul><br>
+        <button class="btn" onclick="request()" ${requested ? "disabled" : ""}>${requested ? "Waiting for patient consent…" : "Request records with Recap"}</button>
+      </div>`;
+    return;
+  }
+  const m = S.merged;
+  const meds = m.active_meds.map(x => `<tr><td><b>${esc(x.drug)}</b> ${esc(x.dose)}<br><small style="color:var(--muted)">${esc(x.freq)} · since ${esc(x.start)}${x.end ? " · until " + esc(x.end) : ""}</small></td><td style="text-align:right">${chip(x.source_id, x.source)}</td></tr>`).join("")
+    + m.recent_meds.map(x => `<tr><td><b>${esc(x.drug)}</b> ${esc(x.dose)} <small style="color:var(--muted)">(finished ${esc(x.end)})</small></td><td style="text-align:right">${chip(x.source_id, x.source)}</td></tr>`).join("");
+  const alerts = S.alerts.map(a => `
+    <div class="alert ${a.severity}"><div class="k">${esc(a.severity)} · ${esc(a.kind)}</div>
+      <div class="t">${esc(a.title)}</div><div class="d">${esc(a.detail)}</div><div class="a">→ ${esc(a.action)}</div></div>`).join("");
+  const tl = m.encounters.map(e => `<div><span class="dt">${esc(e.date)}</span>${chip(e.source_id, e.source)}<br>${esc(e.summary)}</div>`).join("");
+  const allergies = m.allergies.map(a => `<tr><td><b>${esc(a.substance)}</b> — ${esc(a.reaction)}</td><td style="text-align:right">${chip(a.source_id, a.source)}</td></tr>`).join("") || `<tr><td>None on file</td></tr>`;
+  el.innerHTML = top + `
+    <div class="body"><div class="grid">
+      <div>
+        <h4>30-second brief</h4>
+        <div class="card brief">${esc(S.brief)}<div class="by">${S.brief_source === "claude" ? "Written by Claude from " + S.consent.length + " sources" : "Template summary (offline mode)"}</div></div>
+        <h4>Safety alerts (${S.alerts.length})</h4>
+        ${alerts || '<div class="card">No conflicts found.</div>'}
+        <h4>Ask Recap</h4>
+        <div class="card">
+          <form class="ask" onsubmit="ask(event)"><input id="q" placeholder="e.g. Why might he be bruising?" autocomplete="off"><button>Ask</button></form>
+          ${qa.map(x => `<div class="q">Q: ${esc(x.q)}</div><div class="answer">${esc(x.a)}</div>`).join("")}
+        </div>
+      </div>
+      <div>
+        <h4>Active medications (${m.active_meds.length})</h4>
+        <div class="card"><table>${meds}</table></div>
+        <h4>Allergies</h4>
+        <div class="card"><table>${allergies}</table></div>
+        <h4>Visit timeline</h4>
+        <div class="card tl">${tl}</div>
+      </div>
+    </div></div>`;
+}
+
+function request() { requested = true; render(); }
+
+async function share() {
+  const ids = [...document.querySelectorAll("#phone input:checked")].map(i => i.value);
+  busy = true; render();
+  await fetch("/api/consent", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({sources: ids})});
+  busy = false; await load();
+}
+
+async function revoke() {
+  await fetch("/api/consent", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({sources: []})});
+  requested = false; qa = []; await load();
+}
+
+async function resetDemo() {
+  await fetch("/api/reset", {method: "POST"});
+  requested = false; qa = []; await load();
+}
+
+async function ask(e) {
+  e.preventDefault();
+  const input = document.getElementById("q"), q = input.value.trim();
+  if (!q) return;
+  input.value = ""; input.disabled = true;
+  const r = await (await fetch("/api/ask", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({question: q})})).json();
+  qa.unshift({q, a: r.answer || r.error});
+  renderEhr();
+}
+
+load();
+</script>
+</body>
+</html>

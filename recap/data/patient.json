@@ -1,0 +1,81 @@
+{
+  "_note": "Synthetic demo patient. All names, institutions and records are fictional.",
+  "patient": {
+    "id": "P-0001",
+    "name": "Wei-Lin Chen",
+    "age": 68,
+    "sex": "M",
+    "dob": "1958-04-17"
+  },
+  "today": {
+    "date": "2026-11-11",
+    "clinic": "Riverside Family Clinic",
+    "doctor": "Dr. Huang",
+    "reason": "New patient. Easy bruising on arms and legs, itchy rash for 5 days, tired."
+  },
+  "sources": [
+    {
+      "id": "sunrise",
+      "name": "Sunrise Medical Center",
+      "kind": "Medical center · Cardiology",
+      "allergies": [
+        {"substance": "Penicillin", "reaction": "Hives and facial swelling", "recorded": "2019-05-02"}
+      ],
+      "diagnoses": [
+        {"name": "Hypertension", "since": "2021-06-10"},
+        {"name": "Atrial fibrillation", "since": "2026-03-14"}
+      ],
+      "encounters": [
+        {"date": "2026-03-14", "dept": "Cardiology", "summary": "New atrial fibrillation found on ECG. Started warfarin for stroke prevention."},
+        {"date": "2026-09-20", "dept": "Cardiology", "summary": "AF rate controlled. INR 2.4, in target range. Continue warfarin."}
+      ],
+      "prescriptions": [
+        {"drug": "Warfarin", "dose": "5 mg", "freq": "once daily", "start": "2026-03-14", "days": null, "class": "anticoagulant"},
+        {"drug": "Amlodipine", "dose": "5 mg", "freq": "once daily", "start": "2021-06-10", "days": null, "class": "dihydropyridine calcium channel blocker"},
+        {"drug": "Atorvastatin", "dose": "20 mg", "freq": "once nightly", "start": "2021-06-10", "days": null, "class": "statin"}
+      ],
+      "labs": [
+        {"name": "eGFR", "value": 62, "unit": "mL/min/1.73m²", "date": "2025-12-05"},
+        {"name": "INR", "value": 2.4, "unit": "", "date": "2026-09-20"}
+      ]
+    },
+    {
+      "id": "maple",
+      "name": "Maple Family Clinic",
+      "kind": "Primary care clinic",
+      "allergies": [],
+      "diagnoses": [
+        {"name": "Type 2 diabetes", "since": "2020-02-11"}
+      ],
+      "encounters": [
+        {"date": "2026-08-22", "dept": "Family medicine", "summary": "BP 156/92 at visit. Added nifedipine. HbA1c 7.4. Patient did not mention other medications."}
+      ],
+      "prescriptions": [
+        {"drug": "Metformin", "dose": "500 mg", "freq": "twice daily", "start": "2020-02-11", "days": null, "class": "biguanide"},
+        {"drug": "Nifedipine XL", "dose": "30 mg", "freq": "once daily", "start": "2026-08-22", "days": null, "class": "dihydropyridine calcium channel blocker"}
+      ],
+      "labs": [
+        {"name": "HbA1c", "value": 7.4, "unit": "%", "date": "2026-08-22"},
+        {"name": "eGFR", "value": 48, "unit": "mL/min/1.73m²", "date": "2026-08-22"}
+      ]
+    },
+    {
+      "id": "harbor",
+      "name": "Harbor City Hospital",
+      "kind": "Emergency department",
+      "allergies": [],
+      "diagnoses": [
+        {"name": "Acute low back pain", "since": "2026-11-02"},
+        {"name": "Urinary tract infection", "since": "2026-11-02"}
+      ],
+      "encounters": [
+        {"date": "2026-11-02", "dept": "Emergency", "summary": "Low back pain after lifting, and painful urination. Allergies: none known (patient unsure). Discharged with ibuprofen and amoxicillin-clavulanate."}
+      ],
+      "prescriptions": [
+        {"drug": "Ibuprofen", "dose": "400 mg", "freq": "three times daily", "start": "2026-11-02", "days": 14, "class": "NSAID"},
+        {"drug": "Amoxicillin-clavulanate", "dose": "875 mg", "freq": "twice daily", "start": "2026-11-02", "days": 7, "class": "penicillin antibiotic"}
+      ],
+      "labs": []
+    }
+  ]
+}
