@@ -87,6 +87,16 @@
           animation: s 0.8s linear infinite; margin: 0 auto 12px; }
   @keyframes s { to { transform: rotate(360deg); } }
   .label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .sugg { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .sugg button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 4px 10px; font-size: 12px; cursor: pointer; color: var(--ink); }
+  .sugg button:hover { border-color: var(--accent); color: var(--accent); }
+  .doc { font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; background: #f7f7f4; border-radius: 8px; padding: 10px; white-space: pre-wrap; margin: 0 0 10px; }
+  .doc mark { background: #fde68a; padding: 0 2px; border-radius: 3px; }
+  .map { font-size: 13px; }
+  .map div { padding: 5px 0; border-top: 1px solid var(--line); }
+  .map div:first-child { border-top: 0; }
+  .map code { background: #f7f7f4; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+  .ai { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .05em; color: var(--accent); background: var(--accent-soft); border-radius: 4px; padding: 1px 5px; margin-left: 6px; vertical-align: middle; }
 </style>
 </head>
 <body>
@@ -113,7 +123,7 @@ const chip = (id, name) => `<span class="chip ${id}">${esc(name)}</span>`;
 
 async function load() {
   S = await (await fetch("/api/state")).json();
-  document.getElementById("mode").textContent = S.llm ? "AI: " + S.model : "AI: offline template mode";
+  document.getElementById("mode").textContent = S.ai_mode === "live" ? "AI: " + S.model + " (live)" : "AI: Claude · cached outputs (no API key in this build)";
   render();
 }
 
@@ -163,8 +173,8 @@ function renderEhr() {
   }
   if (!S.consent.length) {
     el.innerHTML = top + `
-      <div class="empty"><h3>No prior records at this clinic</h3>
-        <div>Without Recap, the next 10 minutes go to asking:</div>
+      <div class="empty"><h3>Medication reconciliation needed · no prior records here</h3>
+        <div>Without Recap, this is phone calls, faxes, and asking the patient:</div>
         <ul><li>Which hospitals have you been to?</li><li>What medicines do you take? What dose?</li>
           <li>Any allergies?</li><li>Any recent tests?</li></ul><br>
         <button class="btn" onclick="request()" ${requested ? "disabled" : ""}>${requested ? "Waiting for patient consent…" : "Request records with Recap"}</button>
@@ -172,23 +182,40 @@ function renderEhr() {
     return;
   }
   const m = S.merged;
-  const meds = m.active_meds.map(x => `<tr><td><b>${esc(x.drug)}</b> ${esc(x.dose)}<br><small style="color:var(--muted)">${esc(x.freq)} · since ${esc(x.start)}${x.end ? " · until " + esc(x.end) : ""}</small></td><td style="text-align:right">${chip(x.source_id, x.source)}</td></tr>`).join("")
-    + m.recent_meds.map(x => `<tr><td><b>${esc(x.drug)}</b> ${esc(x.dose)} <small style="color:var(--muted)">(finished ${esc(x.end)})</small></td><td style="text-align:right">${chip(x.source_id, x.source)}</td></tr>`).join("");
+  const fromDoc = id => S.extraction && S.extraction.source_id === id ? '<span class="ai">AI-READ</span>' : "";
+  const meds = m.active_meds.map(x => `<tr><td><b>${esc(x.drug)}</b> ${esc(x.dose)}${fromDoc(x.source_id)}<br><small style="color:var(--muted)">${esc(x.freq)} · since ${esc(x.start)}${x.end ? " · until " + esc(x.end) : ""}</small></td><td style="text-align:right">${chip(x.source_id, x.source)}</td></tr>`).join("")
+    + m.recent_meds.map(x => `<tr><td><b>${esc(x.drug)}</b> ${esc(x.dose)}${fromDoc(x.source_id)} <small style="color:var(--muted)">(finished ${esc(x.end)})</small></td><td style="text-align:right">${chip(x.source_id, x.source)}</td></tr>`).join("");
   const alerts = S.alerts.map(a => `
     <div class="alert ${a.severity}"><div class="k">${esc(a.severity)} · ${esc(a.kind)}</div>
       <div class="t">${esc(a.title)}</div><div class="d">${esc(a.detail)}</div><div class="a">→ ${esc(a.action)}</div></div>`).join("");
   const tl = m.encounters.map(e => `<div><span class="dt">${esc(e.date)}</span>${chip(e.source_id, e.source)}<br>${esc(e.summary)}</div>`).join("");
   const allergies = m.allergies.map(a => `<tr><td><b>${esc(a.substance)}</b> — ${esc(a.reaction)}</td><td style="text-align:right">${chip(a.source_id, a.source)}</td></tr>`).join("") || `<tr><td>None on file</td></tr>`;
+  const byLabel = {claude: "Written by Claude (live) from " + S.consent.length + " sources",
+                   cached: "Written by Claude from " + S.consent.length + " sources · cached for this demo build",
+                   template: "Template summary"}[S.brief_source] || "";
+  let docCard = "";
+  if (S.extraction) {
+    const x = S.extraction;
+    let text = esc(x.document);
+    x.highlights.forEach(h => { text = text.split(esc(h)).join("<mark>" + esc(h) + "</mark>"); });
+    const src = S.sources.find(s => s.id === x.source_id);
+    docCard = `<h4>Unstructured record, read by AI <span class="ai">CLAUDE</span></h4>
+      <div class="card"><div style="margin-bottom:8px">${chip(src.id, src.name)} <small style="color:var(--muted)">ER discharge note, free text</small></div>
+        <div class="doc">${text}</div>
+        <div class="map">${x.items.map(i => `<div><code>${esc(i.found)}</code> → <b>${esc(i.normalized)}</b> <small style="color:var(--muted)">(${esc(i.class)})</small></div>`).join("")}</div>
+      </div>`;
+  }
   el.innerHTML = top + `
     <div class="body"><div class="grid">
       <div>
-        <h4>30-second brief</h4>
-        <div class="card brief">${esc(S.brief)}<div class="by">${S.brief_source === "claude" ? "Written by Claude from " + S.consent.length + " sources" : "Template summary (offline mode)"}</div></div>
+        <h4>Reconciliation brief · ${S.consent.length} sources</h4>
+        <div class="card brief">${esc(S.brief)}<div class="by">${byLabel}</div></div>
         <h4>Safety alerts (${S.alerts.length})</h4>
         ${alerts || '<div class="card">No conflicts found.</div>'}
         <h4>Ask Recap</h4>
         <div class="card">
           <form class="ask" onsubmit="ask(event)"><input id="q" placeholder="e.g. Why might he be bruising?" autocomplete="off"><button>Ask</button></form>
+          <div class="sugg">${(S.suggestions || []).map(q => `<button type="button" data-q="${esc(q)}">${esc(q)}</button>`).join("")}</div>
           ${qa.map(x => `<div class="q">Q: ${esc(x.q)}</div><div class="answer">${esc(x.a)}</div>`).join("")}
         </div>
       </div>
@@ -197,6 +224,7 @@ function renderEhr() {
         <div class="card"><table>${meds}</table></div>
         <h4>Allergies</h4>
         <div class="card"><table>${allergies}</table></div>
+        ${docCard}
         <h4>Visit timeline</h4>
         <div class="card tl">${tl}</div>
       </div>
@@ -221,6 +249,11 @@ async function resetDemo() {
   await fetch("/api/reset", {method: "POST"});
   requested = false; qa = []; await load();
 }
+
+document.addEventListener("click", e => {
+  const b = e.target.closest(".sugg button");
+  if (b) { document.getElementById("q").value = b.dataset.q; ask(new Event("submit")); }
+});
 
 async function ask(e) {
   e.preventDefault();

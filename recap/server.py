@@ -16,6 +16,13 @@ import llm
 HERE = os.path.dirname(os.path.abspath(__file__))
 with open(os.path.join(HERE, "data", "patient.json"), encoding="utf-8") as f:
     RECORD = json.load(f)
+with open(os.path.join(HERE, "data", "cached_llm.json"), encoding="utf-8") as f:
+    CACHED = json.load(f)
+ALL_SOURCES = {s["id"] for s in RECORD["sources"]}
+
+
+def ai_mode():
+    return "live" if llm.available() else "cached"
 
 STATE = {"consent": [], "granted_at": None, "brief": None, "brief_source": None}
 LOCK = threading.Lock()
@@ -38,21 +45,21 @@ def make_brief(merged, found):
             return llm.brief(merged, found), "claude"
         except Exception as e:  # keep the demo running if the API fails
             print("LLM brief failed:", repr(e))
+    if set(STATE["consent"]) == ALL_SOURCES:
+        return CACHED["brief"], "cached"
     return engine.fallback_brief(merged, found), "template"
 
 
-def offline_answer(merged, found, q):
+def cached_answer(q):
     ql = q.lower()
-    if any(w in ql for w in ("pressure", "bp", "hypertens")):
-        ms = [m for m in merged["active_meds"] if "calcium" in m["class"]]
-        return "Blood pressure meds: " + "; ".join("%s %s [%s]" % (m["drug"], m["dose"], m["source"]) for m in ms) + ". Two drugs of the same class from two prescribers."
-    if any(w in ql for w in ("bruis", "bleed", "inr")):
-        return "Warfarin 5 mg [Sunrise Medical Center] plus ibuprofen 400 mg TID since 2026-11-02 [Harbor City Hospital]. Last INR 2.4 on 2026-09-20 [Sunrise Medical Center], before the NSAID. Check INR today."
-    if any(w in ql for w in ("rash", "allerg", "itch")):
-        return "Penicillin allergy with hives [Sunrise Medical Center]. Amoxicillin-clavulanate given 2026-11-02 to 11-08 [Harbor City Hospital]; rash started about 5 days ago. Consider drug reaction."
-    if any(w in ql for w in ("kidney", "renal", "egfr")):
-        return "eGFR 62 on 2025-12-05 [Sunrise Medical Center] → 48 on 2026-08-22 [Maple Family Clinic]. On metformin and an NSAID."
-    return "Offline mode: set ANTHROPIC_API_KEY for free-form questions. Try asking about bruising, rash, blood pressure or kidney function."
+    best, score = None, 0
+    for item in CACHED["answers"]:
+        s = sum(1 for k in item["keywords"] if k in ql)
+        if s > score:
+            best, score = item, s
+    if best and set(STATE["consent"]) == ALL_SOURCES:
+        return best["a"]
+    return "This demo build has no API key, so it answers a fixed set of questions. Try one of the suggested questions below."
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -82,7 +89,9 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, {
                     "patient": RECORD["patient"], "today": RECORD["today"], "sources": sources_meta(),
                     "consent": STATE["consent"], "granted_at": STATE["granted_at"],
-                    "llm": llm.available(), "model": llm.MODEL if llm.available() else None,
+                    "llm": llm.available(), "model": llm.MODEL, "ai_mode": ai_mode(),
+                    "suggestions": [a["q"] for a in CACHED["answers"]],
+                    "extraction": CACHED["extraction"] if CACHED["extraction"]["source_id"] in STATE["consent"] else None,
                     "merged": merged if STATE["consent"] else None,
                     "alerts": found if STATE["consent"] else [],
                     "brief": STATE["brief"], "brief_source": STATE["brief_source"],
@@ -117,11 +126,11 @@ class Handler(BaseHTTPRequestHandler):
                     return self._send(200, {"answer": llm.ask(merged, found, q), "source": "claude"})
                 except Exception as e:
                     print("LLM ask failed:", repr(e))
-            return self._send(200, {"answer": offline_answer(merged, found, q), "source": "template"})
+            return self._send(200, {"answer": cached_answer(q), "source": "cached"})
         return self._send(404, {"error": "not found"})
 
 
 if __name__ == "__main__":
     port = int(os.environ.get("RECAP_PORT", "8765"))
-    print("Recap on http://127.0.0.1:%d  (LLM: %s)" % (port, llm.MODEL if llm.available() else "offline template"))
+    print("Recap on http://127.0.0.1:%d  (AI: %s)" % (port, llm.MODEL + " live" if llm.available() else "cached Claude outputs"))
     ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()

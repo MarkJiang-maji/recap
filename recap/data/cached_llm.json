@@ -1,0 +1,41 @@
+{
+  "_note": "Outputs written by Claude ahead of time for the no-API-key demo build. With ANTHROPIC_API_KEY set, the server generates the brief and answers live instead.",
+  "brief": "- Bruising: possible warfarin + NSAID bleeding. Warfarin 5 mg daily [Sunrise Medical Center] plus ibuprofen 400 mg three times daily since Nov 2 [Harbor City Hospital]. Last INR 2.4 was before the NSAID [Sunrise Medical Center]; consider INR today.\n- Rash: penicillin allergy with hives [Sunrise Medical Center], yet Augmentin (amoxicillin-clavulanate) given Nov 2–8 [Harbor City Hospital]. Consider drug reaction.\n- Two calcium channel blockers: amlodipine [Sunrise Medical Center] and nifedipine XL [Maple Family Clinic].\n- Kidneys: eGFR 62 → 48 [Sunrise Medical Center → Maple Family Clinic] while on metformin and an NSAID.\n- Background: atrial fibrillation, hypertension, type 2 diabetes. 6 active meds from 3 prescribers.",
+  "answers": [
+    {
+      "q": "Why might he be bruising?",
+      "keywords": ["bruis", "bleed", "inr", "warfarin"],
+      "a": "Most likely contributor in the records: warfarin 5 mg daily [Sunrise Medical Center] combined with ibuprofen 400 mg three times daily, started Nov 2 [Harbor City Hospital]. NSAIDs add bleeding risk and can raise INR. His last INR, 2.4, was on Sep 20, before the ibuprofen [Sunrise Medical Center]. Consider checking INR and platelets today."
+    },
+    {
+      "q": "Could the rash be a drug reaction?",
+      "keywords": ["rash", "allerg", "itch", "hive", "penicillin", "augmentin"],
+      "a": "Possibly. He has a documented penicillin allergy with hives and facial swelling, recorded 2019 [Sunrise Medical Center]. The ER prescribed Augmentin (amoxicillin-clavulanate, a penicillin) Nov 2–8, and noted allergies as 'NKDA? pt unsure' [Harbor City Hospital]. The rash began about 5 days ago, during that course."
+    },
+    {
+      "q": "What is he taking for blood pressure?",
+      "keywords": ["pressure", "bp", "hypertens", "amlodipine", "nifedipine"],
+      "a": "Two drugs of the same class: amlodipine 5 mg daily since 2021 [Sunrise Medical Center] and nifedipine XL 30 mg daily since Aug 22 [Maple Family Clinic]. The clinic note says he did not mention other medications at that visit [Maple Family Clinic]."
+    },
+    {
+      "q": "Is his kidney function OK for metformin?",
+      "keywords": ["kidney", "renal", "egfr", "metformin", "creatinine"],
+      "a": "eGFR fell from 62 on 2025-12-05 [Sunrise Medical Center] to 48 on 2026-08-22 [Maple Family Clinic]. He takes metformin 500 mg twice daily [Maple Family Clinic] and is now on ibuprofen [Harbor City Hospital]. No result since the ibuprofen started; consider rechecking renal function and reviewing the metformin dose."
+    },
+    {
+      "q": "What should I review today?",
+      "keywords": ["review", "today", "change", "plan", "summary", "summar", "next"],
+      "a": "Items the records point to, for your judgment: (1) ibuprofen while on warfarin [Harbor City Hospital, Sunrise Medical Center]; INR not checked since. (2) Penicillin allergy vs recent Augmentin [Sunrise Medical Center, Harbor City Hospital]; update allergy lists. (3) Duplicate calcium channel blockers [Sunrise Medical Center, Maple Family Clinic]. (4) Falling eGFR with metformin and an NSAID [Maple Family Clinic]."
+    }
+  ],
+  "extraction": {
+    "source_id": "harbor",
+    "document": "HARBOR CITY HOSPITAL - EMERGENCY DEPT\nDISCHARGE NOTE        11/02/26  23:41\nPt: CHEN, WEI-LIN   68M\n\nCC: LBP x2d after lifting boxes. Dysuria.\nAllergies: NKDA? (pt unsure)\nUA: nitrite +, LE +\n\nImp: 1) acute mechanical LBP\n     2) uncomplicated UTI\n\nDispo: d/c home\nRx: Motrin 400mg PO TID x14d prn pain\n    Augmentin 875/125 PO BID x7d\nF/u PCP 1 wk. RTC if fever / flank pain.",
+    "highlights": ["Motrin 400mg PO TID x14d", "Augmentin 875/125 PO BID x7d", "NKDA? (pt unsure)"],
+    "items": [
+      {"found": "Motrin 400mg PO TID x14d", "normalized": "Ibuprofen 400 mg, three times daily, 14 days", "class": "NSAID"},
+      {"found": "Augmentin 875/125 PO BID x7d", "normalized": "Amoxicillin-clavulanate 875 mg, twice daily, 7 days", "class": "penicillin antibiotic"},
+      {"found": "NKDA? (pt unsure)", "normalized": "Allergies not confirmed at this visit", "class": "allergy status"}
+    ]
+  }
+}
