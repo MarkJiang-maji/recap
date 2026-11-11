@@ -62,6 +62,21 @@ rules flag what no single hospital could see:
 **No API key at the event:** this build ships Claude outputs written ahead of time
 (`recap/data/cached_llm.json`), and the UI labels them "cached". With a key, the brief and Q&A run live.
 
+## Roadmap
+
+Every step reuses the same patient-consented record.
+
+1. **Today: cross-hospital medication reconciliation** for care teams (this demo).
+2. **Patient app:** "Your record goes with you — every medication explained in plain language, with the
+   questions worth asking your doctor." It is also how patients connect their records.
+3. **Missed-claim alerts (Taiwan first):** "Recap matches your visits against your policies and flags claims
+   you never filed — visible only to you." Claim documents travel over the industry's existing claims
+   network; we don't rebuild it.
+4. **Follow-up check-ins:** rule-based check-ins after a visit that alert the care team when something looks off.
+5. **Vision:** the consented patient-history layer every healthcare AI agent plugs into.
+
+**Why Taiwan first:** one integration with the NHI My Health Bank SDK covers every NHI hospital.
+
 ## Run
 
 ```bash
