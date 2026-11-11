@@ -95,6 +95,12 @@ Every step reuses the same patient-consented record.
 
 **Why Taiwan first:** one integration with the NHI My Health Bank SDK covers every NHI hospital.
 
+## Team
+
+Built by a team from the AI research center at Chang Gung Memorial Hospital, one of Taiwan's largest
+hospital systems. Recap is an independent hackathon project: it is not endorsed by Chang Gung, and the demo
+uses only synthetic patient data.
+
 ## Run
 
 ```bash
