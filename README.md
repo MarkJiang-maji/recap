@@ -78,7 +78,7 @@ prescriptions ([MOHW](https://www.mohw.gov.tw/cp-4250-50429-1.html), [MOHW](http
 Recap starts where it stops: with the patient, the family and care at home, through the NHI My Health Bank
 SDK that lets patients export their own record. Single payer covers 99.9% of the population
 ([MOHW 2024](https://service.mohw.gov.tw/ebook/dopl/113/02/files/basic-html/page109.html)), so one
-integration reaches 23 million people. Next: the US, which has no equivalent, over patient-access FHIR APIs.
+integration reaches 23 million people. Next: the US, which has no single national equivalent and where two in three hospitals still exchange records by fax ([ONC 2023](https://www.healthit.gov/sites/default/files/2024-05/Interoperable-Exchange-of-Patient-Health-Information-Among-U.S.-Hospitals-2023.pdf)), over patient-access FHIR APIs.
 
 ## Roadmap
 
