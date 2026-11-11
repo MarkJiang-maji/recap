@@ -62,6 +62,20 @@ rules flag what no single hospital could see:
 **No API key at the event:** this build ships Claude outputs written ahead of time
 (`recap/data/cached_llm.json`), and the UI labels them "cached". With a key, the brief and Q&A run live.
 
+## How Recap is different
+
+Care-navigation companies are growing, which shows the market is real. Recap sits at a different layer:
+
+- **The record, not the logistics.** Recap holds the cross-hospital medication record and checks it.
+- **Follows the patient, not the institution.** Per-visit consent that expires; works across any provider.
+- **Deterministic safety.** Alerts come from fixed rules. The AI only reads records and cites sources,
+  and Recap only ever escalates: it never tells anyone they're fine.
+
+**Why Taiwan first:** a single-payer system covers 99.9% of the population
+([MOHW 2024](https://service.mohw.gov.tw/ebook/dopl/113/02/files/basic-html/page109.html)), and every patient
+can export their own record through the NHI My Health Bank SDK. One integration reaches 23 million people.
+Next: the US, over patient-access FHIR APIs.
+
 ## Roadmap
 
 Every step reuses the same patient-consented record.
