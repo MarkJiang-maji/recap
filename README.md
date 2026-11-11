@@ -71,10 +71,14 @@ Care-navigation companies are growing, which shows the market is real. Recap sit
 - **Deterministic safety.** Alerts come from fixed rules. The AI only reads records and cites sources,
   and Recap only ever escalates: it never tells anyone they're fine.
 
-**Why Taiwan first:** a single-payer system covers 99.9% of the population
-([MOHW 2024](https://service.mohw.gov.tw/ebook/dopl/113/02/files/basic-html/page109.html)), and every patient
-can export their own record through the NHI My Health Bank SDK. One integration reaches 23 million people.
-Next: the US, over patient-access FHIR APIs.
+**Taiwan already proved the value.** Taiwan's NHI cloud system gives clinicians cross-hospital records,
+including medications and allergies, with proactive alerts for drug interactions, allergies and duplicate
+prescriptions ([MOHW](https://www.mohw.gov.tw/cp-4250-50429-1.html), [MOHW](https://www.mohw.gov.tw/fp-16-57049-1.html),
+[iThome](https://www.ithome.com.tw/news/154486)). That system is built for clinicians inside NHI providers.
+Recap starts where it stops: with the patient, the family and care at home, through the NHI My Health Bank
+SDK that lets patients export their own record. Single payer covers 99.9% of the population
+([MOHW 2024](https://service.mohw.gov.tw/ebook/dopl/113/02/files/basic-html/page109.html)), so one
+integration reaches 23 million people. Next: the US, which has no equivalent, over patient-access FHIR APIs.
 
 ## Roadmap
 
